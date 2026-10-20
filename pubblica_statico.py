@@ -128,6 +128,32 @@ for _dp, _dn, _fn in os.walk(OUT):
         _n = _cssu.sub(_fix_css, _s)
         if _n != _s: open(_p, "w", encoding="utf-8", newline="").write(_n)
 
+# PUNTO CRITICO: freccetta dei sottomenu AUTOMATICA. Avada la mette solo se la voce di primo livello ha dentro
+# <span class="fusion-megamenu-icon"><i class="glyphicon fa-angle-down fas"></i></span> e la classe fusion-flex-link sul <a>.
+# Nel mirror alcune voci con sottomenu (es. "Blog") non l'hanno, quindi qui la aggiungiamo a OGNI voce di primo livello
+# (li.menu-item-has-children.fusion-dropdown-menu) che ne e' priva, in tutte le pagine e in tutte le lingue.
+# Cosi' una voce nuova con sottomenu avra' la freccia senza toccare l'HTML a mano. Il selettore lingua (wpml-ls) e' escluso di proposito.
+# Per verificare: python bin/villatrecolli2/verifica_frecce_menu.py
+# --- Menu: freccetta ai sottomenu aggiunta in automatico
+_li_sub = _r2.compile(r'(<li\b(?=[^>]*\bmenu-item-has-children\b)(?=[^>]*\bfusion-dropdown-menu\b)(?![^>]*wpml-ls)[^>]*>(?:\s*<span\b[^>]*></span>)*\s*)<a\b([^>]*)>(.*?)</a>', _r2.S)
+_ARROW = '<span class="fusion-megamenu-icon"><i class="glyphicon fa-angle-down fas" aria-hidden="true"></i></span>'
+def _add_arrow(m):
+    inner = m.group(3)
+    if "fusion-megamenu-icon" in inner or 'class="menu-text"' not in inner:
+        return m.group(0)
+    attrs = m.group(2)
+    if "fusion-flex-link" not in attrs:
+        attrs = _r2.sub(r'class="', 'class="fusion-flex-link ', attrs, count=1)
+    return m.group(1) + "<a" + attrs + ">" + inner.replace('<span class="menu-text">', _ARROW + '<span class="menu-text">', 1) + "</a>"
+for _dp, _dn, _fn in os.walk(OUT):
+    _dn[:] = [d for d in _dn if not (_dp == OUT and d in ("admin", "wp-content", "wp-includes"))]
+    for _f in _fn:
+        if not _f.endswith(".html"): continue
+        _p = os.path.join(_dp, _f)
+        _s = open(_p, encoding="utf-8", errors="surrogateescape", newline="").read()
+        _n = _li_sub.sub(_add_arrow, _s)
+        if _n != _s: open(_p, "w", encoding="utf-8", errors="surrogateescape", newline="").write(_n)
+
 # PUNTO CRITICO: la sitemap NON va scritta a mano, viene rigenerata qui a ogni deploy (con CNAME usa il dominio proprio,
 # altrimenti github.io/<repo>). Pagine con noindex o redirect sono escluse di proposito.
 # --- Sitemap: generata a ogni deploy da tutte le pagine HTML realmente presenti in _out (mirror + Jekyll)
