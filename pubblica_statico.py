@@ -63,7 +63,7 @@ def _esiste(rel):
     rel = _uq(rel.split("#")[0].split("?")[0]).strip("/")
     t = os.path.join(OUT, *rel.split("/")) if rel else OUT
     return os.path.isfile(t) or os.path.isfile(os.path.join(t, "index.html"))
-_abs = _r2.compile(r"https?://(?:www\.)?villatrecolli\.com(/[^\"'\s,)<>\\]*)?")
+_abs = _r2.compile(r"(?:https?:)?//(?:www\.)?villatrecolli\.com(/[^\"'\s,)<>\\]*)?")
 _root = _r2.compile(r'((?:href|src|action|poster|data-src)=")/(?!/)([^"]*)"')
 _rel = _r2.compile(r'((?:href|src)=")(?![a-zA-Z][a-zA-Z0-9+.-]*:|/|#|\?)([^"]+)"')
 def _fix_abs(m):
@@ -92,6 +92,18 @@ for _dp, _dn, _fn in os.walk(OUT):
         _n = _abs.sub(_fix_abs, _s)
         _n = _root.sub(_fix_root, _n)
         _n = _rel.sub(_fix_rel, _n)
+        if _n != _s: open(_p, "w", encoding="utf-8", newline="").write(_n)
+
+# --- CSS: font e immagini citati con URL assoluto/protocol-relative dell'originale -> locali (altrimenti i font cross-origin vengono bloccati: sparivano le icone/frecce del menu)
+_cssu = _r2.compile(r"""((?:https?:)?//(?:www\.)?villatrecolli\.com)(/wp-content/[^)"'\s,;?#]+)""")
+def _fix_css(m):
+    return (baseurl + m.group(2)) if _esiste(m.group(2)) else m.group(0)
+for _dp, _dn, _fn in os.walk(OUT):
+    for _f in _fn:
+        if not _f.endswith(".css"): continue
+        _p = os.path.join(_dp, _f)
+        _s = open(_p, encoding="utf-8", errors="ignore", newline="").read()
+        _n = _cssu.sub(_fix_css, _s)
         if _n != _s: open(_p, "w", encoding="utf-8", newline="").write(_n)
 
 # --- Sitemap: generata a ogni deploy da tutte le pagine HTML realmente presenti in _out (mirror + Jekyll)
