@@ -1,8 +1,24 @@
-"""Prepara _out/ con il solo mirror statico (niente Jekyll, niente tool/admin/demo)."""
+"""Prepara _out/ con il solo mirror statico (niente Jekyll, niente tool/admin/demo).
+
+NOTE PER LE PROSSIME SESSIONI (leggere prima di toccare qualcosa)
+- Questo sito (villatrecolli2) = mirror HTML di villatrecolli.com (WordPress + tema Avada), NON al-folio.
+  al-folio resta solo come motore della repo (_layouts, plugin, admin): le sue pagine sono escluse in _config.yml.
+- Le pagine modificate A MANO stanno nella radice della repo (index.html, en/, la-villa/, ...). Questo script le COPIA in _out/
+  e poi le RIFINISCE (link, CSS, sitemap, hreflang). _out/ si rigenera a ogni deploy: non modificare mai _out/ a mano.
+- Deploy = push su main -> workflow "Deploy site" -> branch gh-pages. Online dopo ~1 minuto (Ctrl+F5 per la cache).
+- Gli URL ASSOLUTI https://www.villatrecolli.com/... nei file sorgente sono NORMALI: li riscrive questo script in locale
+  (solo se il file esiste nel clone). Quindi anche un'immagine nuova va messa in wp-content/uploads/ e puo' essere citata
+  con l'URL dell'originale: diventa locale al deploy. Se il file NON esiste in locale, il link resta sul sito originale.
+- Problemi gia' risolti (non rifarli): home coperta da _pages di servizi.lazio (SOLO_MIRROR), cartelle del mirror non
+  pubblicate (DIRS dinamico), font/icone del menu bloccati cross-origin (sezione CSS), link che uscivano dal clone.
+"""
 import os, shutil, subprocess, sys
 OUT = "_out"; TMP = "_avada_site"
 DIRS = ["admin","contatti","author","blog","categoria_portfolio","portfolio-items","servizi","servizi-a-roma","servizi-agli-edifici","servizi-ai-cittadini","servizi-alle-aziende","slide-page","wp-content","wp-includes"]
 FILES = ["index.html","robots.txt","sitemap_index.xml","404.html","CNAME"]
+# PUNTO CRITICO: una cartella nuova nella radice viene pubblicata SOLO se contiene un index.html con "avada-html-layout"
+# nei primi 4000 caratteri (pagina Avada). Una pagina nuova scritta a mano senza quel marcatore NON va online (404).
+# Le cartelle che iniziano con "." o "_" e assets/bin/docs/test/modules_source sono escluse di proposito.
 # dir del mirror: ogni cartella radice con un index.html Avada (dinamico: dipende dal sito copiato) + wp-content/wp-includes
 for _d in sorted(os.listdir(".")):
     if not os.path.isdir(_d) or _d in DIRS or _d.startswith((".", "_")) or _d in ("assets", "bin", "docs", "test", "modules_source"):
@@ -26,6 +42,8 @@ open(os.path.join(OUT, ".nojekyll"), "w").close()
 # --- Jekyll: articoli e categorie (_avada/) sovrapposti al mirror, stesso URL. baseurl: con CNAME "" altrimenti /<repo> (anteprima github.io)
 repo = os.environ.get("GITHUB_REPOSITORY", "x/villatrecolli2").split("/")[-1]
 baseurl = "" if os.path.isfile("CNAME") else "/" + repo
+# PUNTO CRITICO - NON mettere SOLO_MIRROR = False: riattiva l'overlay Jekyll di _avada/ (vecchio sito servizi.lazio)
+# che si sovrappone al mirror: la home tornava "Servizi Lazio" e senza grafica. Qui conta solo il mirror di villatrecolli.com.
 SOLO_MIRROR = True  # villatrecolli: vale solo il mirror di villatrecolli.com, niente overlay Jekyll di _avada (era il vecchio servizi.lazio)
 if not SOLO_MIRROR:
     open("_avada/_config_deploy.yml", "w").write('baseurl: "%s"\navada_prefix: ""\n' % baseurl)
@@ -54,6 +72,9 @@ if not SOLO_MIRROR:
                 if s2 != s: open(p, "w", encoding="utf-8", newline="").write(s2)
     print("ok", sum(len(f) for _,_,f in os.walk(OUT)), "file")
 
+# PUNTO CRITICO: _esiste() decide tutto. Se una pagina/immagine NON e' nel clone il link resta (o torna) sul sito originale:
+# e' voluto (es. /shop, selettore lingua). Per far restare un link nel clone basta creare la cartella/file nella repo.
+# admin/, wp-content/, wp-includes/ sono esclusi dal ciclo di riscrittura dei link.
 # --- Rifinitura link (anteprima github.io): link assoluti a villatrecolli.com -> locali se la pagina esiste nel clone;
 # root-relative -> prefisso baseurl; relativi rotti (es. versione /en/ non copiata) -> sito originale
 import re as _r2, posixpath as _pp
@@ -94,6 +115,7 @@ for _dp, _dn, _fn in os.walk(OUT):
         _n = _rel.sub(_fix_rel, _n)
         if _n != _s: open(_p, "w", encoding="utf-8", newline="").write(_n)
 
+# PUNTO CRITICO: senza questa sezione i font delle icone (frecce del menu) vengono bloccati dal browser perche' cross-origin.
 # --- CSS: font e immagini citati con URL assoluto/protocol-relative dell'originale -> locali (altrimenti i font cross-origin vengono bloccati: sparivano le icone/frecce del menu)
 _cssu = _r2.compile(r"""((?:https?:)?//(?:www\.)?villatrecolli\.com)(/wp-content/[^)"'\s,;?#]+)""")
 def _fix_css(m):
@@ -106,6 +128,8 @@ for _dp, _dn, _fn in os.walk(OUT):
         _n = _cssu.sub(_fix_css, _s)
         if _n != _s: open(_p, "w", encoding="utf-8", newline="").write(_n)
 
+# PUNTO CRITICO: la sitemap NON va scritta a mano, viene rigenerata qui a ogni deploy (con CNAME usa il dominio proprio,
+# altrimenti github.io/<repo>). Pagine con noindex o redirect sono escluse di proposito.
 # --- Sitemap: generata a ogni deploy da tutte le pagine HTML realmente presenti in _out (mirror + Jekyll)
 import re as _re
 from urllib.parse import quote as _q
