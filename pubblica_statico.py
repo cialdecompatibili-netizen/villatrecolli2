@@ -24,7 +24,7 @@ for f in FILES:
 open(os.path.join(OUT, ".nojekyll"), "w").close()
 
 # --- Jekyll: articoli e categorie (_avada/) sovrapposti al mirror, stesso URL. baseurl: con CNAME "" altrimenti /<repo> (anteprima github.io)
-repo = os.environ.get("GITHUB_REPOSITORY", "x/servizi.lazio").split("/")[-1]
+repo = os.environ.get("GITHUB_REPOSITORY", "x/villatrecolli2").split("/")[-1]
 baseurl = "" if os.path.isfile("CNAME") else "/" + repo
 SOLO_MIRROR = True  # villatrecolli: vale solo il mirror di villatrecolli.com, niente overlay Jekyll di _avada (era il vecchio servizi.lazio)
 if not SOLO_MIRROR:
@@ -54,6 +54,46 @@ if not SOLO_MIRROR:
                 if s2 != s: open(p, "w", encoding="utf-8", newline="").write(s2)
     print("ok", sum(len(f) for _,_,f in os.walk(OUT)), "file")
 
+# --- Rifinitura link (anteprima github.io): link assoluti a villatrecolli.com -> locali se la pagina esiste nel clone;
+# root-relative -> prefisso baseurl; relativi rotti (es. versione /en/ non copiata) -> sito originale
+import re as _r2, posixpath as _pp
+from urllib.parse import unquote as _uq
+ORIG = "https://www.villatrecolli.com"
+def _esiste(rel):
+    rel = _uq(rel.split("#")[0].split("?")[0]).strip("/")
+    t = os.path.join(OUT, *rel.split("/")) if rel else OUT
+    return os.path.isfile(t) or os.path.isfile(os.path.join(t, "index.html"))
+_abs = _r2.compile(r"https?://(?:www\.)?villatrecolli\.com(/[^\"'\s,)<>\\]*)?")
+_root = _r2.compile(r'((?:href|src|action|poster|data-src)=")/(?!/)([^"]*)"')
+_rel = _r2.compile(r'((?:href|src)=")(?![a-zA-Z][a-zA-Z0-9+.-]*:|/|#|\?)([^"]+)"')
+def _fix_abs(m):
+    path = m.group(1) or "/"
+    return (baseurl + path) if _esiste(path) else m.group(0)
+_bp = baseurl.strip("/")
+for _dp, _dn, _fn in os.walk(OUT):
+    _dn[:] = [d for d in _dn if not (_dp == OUT and d in ("admin", "wp-content", "wp-includes"))]
+    for _f in _fn:
+        if not _f.endswith(".html"): continue
+        _p = os.path.join(_dp, _f)
+        _s = open(_p, encoding="utf-8", newline="").read()
+        _pd = os.path.relpath(_dp, OUT).replace(os.sep, "/")
+        _pd = "" if _pd == "." else _pd
+        def _fix_root(m):
+            rest = m.group(2)
+            if _bp and (rest == _bp or rest.startswith(_bp + "/")): return m.group(0)
+            full = "/" + rest
+            if not baseurl: return m.group(0)
+            return m.group(1) + (baseurl + full if _esiste(full) else ORIG + full) + '"'
+        def _fix_rel(m):
+            v = m.group(2)
+            t = _pp.normpath(_pp.join(_pd, v.split("#")[0].split("?")[0]))
+            if t.startswith("..") or t == "." or _esiste(t): return m.group(0)
+            return m.group(1) + ORIG + "/" + t + '"'
+        _n = _abs.sub(_fix_abs, _s)
+        _n = _root.sub(_fix_root, _n)
+        _n = _rel.sub(_fix_rel, _n)
+        if _n != _s: open(_p, "w", encoding="utf-8", newline="").write(_n)
+
 # --- Sitemap: generata a ogni deploy da tutte le pagine HTML realmente presenti in _out (mirror + Jekyll)
 import re as _re
 from urllib.parse import quote as _q
@@ -61,7 +101,7 @@ from xml.sax.saxutils import escape as _esc
 if os.path.isfile("CNAME"):
     origin = "https://" + open("CNAME").read().strip()
 else:
-    origin = "https://%s.github.io%s" % (os.environ.get("GITHUB_REPOSITORY", "cialdecompatibili-netizen/servizi.lazio").split("/")[0], baseurl)
+    origin = "https://%s.github.io%s" % (os.environ.get("GITHUB_REPOSITORY", "cialdecompatibili-netizen/villatrecolli2").split("/")[0], baseurl)
 SKIP_DIRS = {"admin", "wp-content", "wp-includes", ".git"}
 urls = []
 for dp, dn, fn in os.walk(OUT):
