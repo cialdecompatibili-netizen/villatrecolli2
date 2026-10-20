@@ -5,8 +5,13 @@ DIRS = ["admin","contatti","author","blog","categoria_portfolio","portfolio-item
 FILES = ["index.html","robots.txt","sitemap_index.xml","404.html","CNAME"]
 # dir del mirror: ogni cartella radice con un index.html Avada (dinamico: dipende dal sito copiato) + wp-content/wp-includes
 for _d in sorted(os.listdir(".")):
-    _i = os.path.join(_d, "index.html")
-    if os.path.isdir(_d) and _d not in DIRS and not _d.startswith((".", "_")) and os.path.isfile(_i) and "avada-html-layout" in open(_i, encoding="utf-8", errors="ignore").read(4000):
+    if not os.path.isdir(_d) or _d in DIRS or _d.startswith((".", "_")) or _d in ("assets", "bin", "docs", "test", "modules_source"):
+        continue
+    _ok = False
+    for _dp, _dn, _fn in os.walk(_d):
+        if "index.html" in _fn and "avada-html-layout" in open(os.path.join(_dp, "index.html"), encoding="utf-8", errors="ignore").read(4000):
+            _ok = True; break
+    if _ok:
         DIRS.append(_d)
 shutil.rmtree(OUT, ignore_errors=True); os.makedirs(OUT)
 for d in DIRS:
