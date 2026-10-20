@@ -206,3 +206,9 @@ Other gates:
 - MENU: la freccetta dei sottomenu e' automatica (sezione 'Menu: freccetta' in pubblica_statico.py). Mai aggiungerla a mano nell'HTML: per una voce nuova con sottomenu basta il deploy. Verifica: python bin/villatrecolli2/verifica_frecce_menu.py
 
 - FOTO EN: sul sito originale molte pagine /en/ sono solo testo, senza le foto dell'IT. bin/villatrecolli2/allinea_immagini_en.py (dry-run, poi --apply) le copia dall'IT nelle EN 'semplici' (idempotente). Home, negozio e categorie EN hanno layout Avada: vanno viste a mano. Dopo aver aggiunto/tradotto una pagina EN rilanciarlo.
+
+
+## Cose che funzionano
+- Foto mancanti nelle pagine EN semplici: `python bin/villatrecolli2/allinea_immagini_en.py` (dry-run), poi `--apply`. Rilanciato non crea doppioni. Dopo il push controllare online che le immagini rispondano 200.
+- Togliere pagine demo Avada: prima cercare i link in ingresso (href verso /slug/) in tutti i .html tracciati, poi `git rm -r <cartella>`. La sitemap si rigenera da sola al deploy, non toccarla a mano. Fatto per about, investors, our-culture, classic-home-new, contact-us, sample-page. Restano orfane (non rimosse): our-history, our-team, corporate-governance, corporate-faq, shareholder-faq, stock-performance, earnings.
+- Script con virgolette/percorsi Windows: scrivere un .py a parte (in claudetemp) e lanciarlo, PowerShell rompe le virgolette inline.
