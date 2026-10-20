@@ -122,3 +122,15 @@ rb = os.path.join(OUT, "robots.txt")
 txt = open(rb).read() if os.path.isfile(rb) else ""
 if "Sitemap:" not in txt: open(rb, "w").write(txt.rstrip("\n") + "\n\nSitemap: %s/sitemap.xml\n" % origin)
 print("sitemap:", len(urls), "url ->", origin + "/sitemap.xml")
+
+# --- hreflang assoluti: canonical/alternate/og:url devono essere URL completi (doppia lingua it/en)
+_host = origin[: len(origin) - len(baseurl)] if baseurl else origin
+_tag = _re.compile(r'<(?:link|meta)\b[^>]*(?:hreflang=|rel="canonical"|property="og:url")[^>]*>')
+for _dp, _dn, _fn in os.walk(OUT):
+    _dn[:] = [d for d in _dn if not (_dp == OUT and d in ("admin", "wp-content", "wp-includes"))]
+    for _f in _fn:
+        if not _f.endswith(".html"): continue
+        _p = os.path.join(_dp, _f)
+        _s = open(_p, encoding="utf-8", newline="").read()
+        _n = _tag.sub(lambda m: _re.sub(r'((?:href|content)=")/(?!/)', lambda k: k.group(1) + _host + "/", m.group(0)), _s)
+        if _n != _s: open(_p, "w", encoding="utf-8", newline="").write(_n)
