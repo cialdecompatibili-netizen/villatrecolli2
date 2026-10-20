@@ -1,0 +1,6 @@
+{%- assign mesi = "Gennaio,Febbraio,Marzo,Aprile,Maggio,Giugno,Luglio,Agosto,Settembre,Ottobre,Novembre,Dicembre" | split: "," -%}
+{%- assign mi = include.d | date: "%-m" | minus: 1 -%}
+{%- assign g = include.d | date: "%-d" | plus: 0 -%}
+{%- assign u = g | modulo: 10 -%}
+{%- if g >= 11 and g <= 13 -%}{%- assign suf = "th" -%}{%- elsif u == 1 -%}{%- assign suf = "st" -%}{%- elsif u == 2 -%}{%- assign suf = "nd" -%}{%- elsif u == 3 -%}{%- assign suf = "rd" -%}{%- else -%}{%- assign suf = "th" -%}{%- endif -%}
+{{ mesi[mi] }} {{ g }}{{ suf }}, {{ include.d | date: "%Y" }}

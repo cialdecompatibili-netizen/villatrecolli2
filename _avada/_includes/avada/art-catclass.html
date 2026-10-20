@@ -1,0 +1,1 @@
+{%- for c in site.data.categorie -%}{%- if page.categorie_visibili contains c.slug -%}{{ ' category-' }}{{ c.slug | split: '/' | last }}{%- endif -%}{%- endfor -%}

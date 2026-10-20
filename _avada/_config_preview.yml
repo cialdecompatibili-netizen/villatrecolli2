@@ -1,0 +1,9 @@
+baseurl: /servizi.lazio
+avada_prefix: /anteprima
+collections:
+  lazio:
+    output: true
+    permalink: /anteprima/:path/
+  categorie:
+    output: true
+    permalink: /anteprima/:path/

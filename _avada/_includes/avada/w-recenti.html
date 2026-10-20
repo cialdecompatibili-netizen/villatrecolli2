@@ -1,0 +1,8 @@
+{%- assign ord = site.lazio | sort: "date" | reverse -%}
+<ul>
+{%- for p in ord limit: 5 %}
+<li>
+<a href="{{ site.baseurl }}{{ p.url | remove_first: site.avada_prefix }}">{{ p.title | escape }}</a>
+</li>
+{%- endfor %}
+</ul>

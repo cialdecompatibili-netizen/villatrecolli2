@@ -1,0 +1,6 @@
+---
+layout: "servizio"
+title: "Daniele F., Autore presso Servizi Lazio"
+stub: true
+---
+{% assign items = site.lazio | where: "wp_tipo", "post" | sort: "date" | reverse %}<ul>{% for i in items %}<li><a href="{{ i.url | relative_url }}">{{ i.title }}</a></li>{% endfor %}</ul>

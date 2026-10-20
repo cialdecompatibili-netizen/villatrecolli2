@@ -1,0 +1,51 @@
+{%- assign ord = site.lazio | sort: "date" | reverse -%}
+{%- assign tot = ord.size -%}
+{%- assign base = page.wp_id | modulo: tot -%}
+<section id="pyre_tabs-widget-2" class="widget fusion-tabs-widget" style="border-style: solid;border-color:transparent;border-width:0px;">
+<div class="fusion-tabs-widget-wrapper fusion-tabs-widget-2 fusion-tabs-clean fusion-tabs-image-default tab-holder">
+<nav class="fusion-tabs-nav">
+<ul class="tabset tabs">
+<li class="active"><a href="#" data-link="fusion-tab-popular">Popular</a></li>
+<li><a href="#" data-link="fusion-tab-recent">Recent</a></li>
+</ul>
+</nav>
+<div class="fusion-tabs-widget-content tab-box tabs-container">
+<div class="fusion-tab-popular fusion-tab-content tab tab_content" data-name="fusion-tab-popular">
+<ul class="fusion-tabs-widget-items news-list">
+{%- for k in (0..2) %}
+{%- assign idx = k | times: 37 | plus: base | modulo: tot %}
+{%- assign p = ord[idx] %}
+<li>
+<div class="image">
+<a href="{{ site.baseurl }}{{ p.url | remove_first: site.avada_prefix }}" aria-label="{{ p.title | escape }}"><img width="66" height="66" src="{{ site.baseurl }}{{ p.thumb }}" class="attachment-recent-works-thumbnail size-recent-works-thumbnail wp-post-image" alt="{{ p.thumb_alt | escape }}" decoding="async" loading="lazy" /></a>
+</div>
+<div class="post-holder">
+<a href="{{ site.baseurl }}{{ p.url | remove_first: site.avada_prefix }}">{{ p.title | escape }}</a>
+<div class="fusion-meta">
+{% include avada/data-it.html d=p.date %}
+</div>
+</div>
+</li>
+{%- endfor %}
+</ul>
+</div>
+<div class="fusion-tab-recent fusion-tab-content tab tab_content" data-name="fusion-tab-recent" style="display: none;">
+<ul class="fusion-tabs-widget-items news-list">
+{%- for p in ord limit: 3 %}
+<li>
+<div class="image">
+<a href="{{ site.baseurl }}{{ p.url | remove_first: site.avada_prefix }}" aria-label="{{ p.title | escape }}"><img width="66" height="66" src="{{ site.baseurl }}{{ p.thumb }}" class="attachment-recent-works-thumbnail size-recent-works-thumbnail wp-post-image" alt="{{ p.thumb_alt | escape }}" decoding="async" loading="lazy" /></a>
+</div>
+<div class="post-holder">
+<a href="{{ site.baseurl }}{{ p.url | remove_first: site.avada_prefix }}">{{ p.title | escape }}</a>
+<div class="fusion-meta">
+{% include avada/data-it.html d=p.date %}
+</div>
+</div>
+</li>
+{%- endfor %}
+</ul>
+</div>
+</div>
+</div>
+</section>

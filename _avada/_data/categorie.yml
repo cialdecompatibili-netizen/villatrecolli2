@@ -1,0 +1,76 @@
+# slug (come nel front matter "categorie"), nome visibile, id WP
+- slug: "servizi/servizi-agli-edifici/assistenza-agli-edifici"
+  nome: "Assistenza agli edifici"
+  id: 89
+- slug: "servizi/servizi-ai-cittadini/assistenza-domiciliare"
+  nome: "Assistenza domiciliare"
+  id: 91
+- slug: "servizi/blog"
+  nome: "Blog"
+  id: 93
+- slug: "servizi/servizi-ai-cittadini/corsi-online"
+  nome: "Corsi online"
+  id: 94
+- slug: "servizi/servizi-agli-edifici/edilizia"
+  nome: "Edilizia"
+  id: 87
+- slug: "servizi/servizi-alle-aziende/logistica"
+  nome: "Logistica"
+  id: 81
+- slug: "servizi/servizi-alle-aziende/noleggio"
+  nome: "Noleggio"
+  id: 92
+- slug: "servizi/servizi-agli-edifici/pulizie"
+  nome: "Pulizie"
+  id: 84
+- slug: "servizi/servizi-agli-edifici/pulizie-industriali"
+  nome: "Pulizie industriali"
+  id: 82
+- slug: "servizi/servizi-ai-cittadini/riparazioni"
+  nome: "Riparazioni"
+  id: 113
+- slug: "servizi/servizi-alle-aziende/ristorazione"
+  nome: "Ristorazione"
+  id: 114
+- slug: "servizi/servizi-ai-cittadini/salute"
+  nome: "Salute"
+  id: 100
+- slug: "servizi/servizi-agli-edifici/sanificazioni"
+  nome: "Sanificazioni"
+  id: 85
+- slug: "servizi/servizi-a-roma"
+  nome: "Servizi a Roma"
+  id: 120
+- slug: "servizi/servizi-agli-edifici"
+  nome: "Servizi agli edifici"
+  id: 109
+- slug: "servizi/servizi-ai-cittadini"
+  nome: "Servizi ai cittadini"
+  id: 95
+- slug: "servizi/servizi-alle-aziende"
+  nome: "Servizi alle aziende"
+  id: 110
+- slug: "servizi/servizi-agli-edifici/servizi-antincendio"
+  nome: "Servizi antincendio"
+  id: 111
+- slug: "servizi/servizi-a-roma/servizi-edili-roma"
+  nome: "Servizi edili Roma"
+  id: 123
+- slug: "servizi/servizi-ai-cittadini/servizi-immobiliari"
+  nome: "Servizi immobiliari"
+  id: 121
+- slug: "servizi/servizi-ai-cittadini/servizi-informatici-per-il-cittadino"
+  nome: "Servizi informatici"
+  id: 115
+- slug: "servizi/servizi-alle-aziende/servizi-informatici-per-le-aziende"
+  nome: "Servizi informatici per le aziende"
+  id: 97
+- slug: "servizi/servizi-per-provincia"
+  nome: "Servizi per provincia"
+  id: 119
+- slug: "servizi/servizi-alle-aziende/sicurezza"
+  nome: "Sicurezza"
+  id: 88
+- slug: "servizi/servizi-alle-aziende/trasporti"
+  nome: "Trasporti"
+  id: 86

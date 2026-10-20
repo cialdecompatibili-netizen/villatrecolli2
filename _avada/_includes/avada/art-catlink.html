@@ -1,0 +1,1 @@
+{%- assign first = true -%}{%- for c in site.data.categorie -%}{%- if page.categorie_visibili contains c.slug -%}{%- unless first -%}{{ ', ' }}{%- endunless -%}<a href="{{ site.baseurl }}/{{ c.slug }}/" rel="category tag">{{ c.nome }}</a>{%- assign first = false -%}{%- endif -%}{%- endfor -%}

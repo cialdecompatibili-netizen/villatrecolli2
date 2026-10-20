@@ -1,0 +1,64 @@
+{%- assign ord = site.lazio | sort: "date" | reverse -%}
+{%- assign vistii = "|" | append: page.wp_id | append: "|" -%}
+{%- assign n = 0 -%}
+{%- assign sel = "" | split: "" -%}
+{%- for cat in page.categorie -%}
+{%- for p in ord -%}
+{%- assign chiave = "|" | append: p.wp_id | append: "|" -%}
+{%- if n < 4 and p.categorie contains cat -%}
+{%- unless vistii contains chiave -%}
+{%- assign sel = sel | push: p -%}
+{%- assign vistii = vistii | append: p.wp_id | append: "|" -%}
+{%- assign n = n | plus: 1 -%}
+{%- endunless -%}
+{%- endif -%}
+{%- endfor -%}
+{%- endfor -%}
+{%- if sel.size > 0 -%}
+<section class="related-posts single-related-posts">
+				<div class="fusion-title fusion-title-size-three sep-none fusion-sep-none" style="margin-top:0px;margin-bottom:10px;">
+				<h3 class="title-heading-left" style="margin:0;">
+					Post correlati				</h3>
+			</div>
+			
+	
+	
+	
+	
+				<div class="fusion-carousel fusion-carousel-title-below-image" data-imagesize="auto" data-metacontent="yes" data-autoplay="no" data-touchscroll="no" data-columns="2" data-itemmargin="35px" data-itemwidth="180" data-touchscroll="yes" data-scrollitems="">
+		<div class="fusion-carousel-positioner">
+			<ul class="fusion-carousel-holder">
+{%- for p in sel %}
+<li class="fusion-carousel-item">
+<div class="fusion-carousel-item-wrapper">
+<div class="fusion-image-wrapper" aria-haspopup="true">
+<img width="{{ p.og_w }}" height="{{ p.og_h }}" src="{{ site.baseurl }}{{ p.thumb_full }}" class="attachment-full size-full wp-post-image" alt="{{ p.thumb_alt | escape }}" decoding="async" loading="lazy" />
+<div class="fusion-rollover">
+<div class="fusion-rollover-content">
+<a class="fusion-rollover-link" href="{{ site.baseurl }}{{ p.url | remove_first: site.avada_prefix }}">{{ p.title | escape }}</a>
+<div class="fusion-rollover-sep"></div>
+<a class="fusion-link-wrapper" href="{{ site.baseurl }}{{ p.url | remove_first: site.avada_prefix }}" aria-label="{{ p.title | escape }}"></a>
+</div>
+</div>
+</div>
+<h4 class="fusion-carousel-title">
+<a class="fusion-related-posts-title-link" href="{{ site.baseurl }}{{ p.url | remove_first: site.avada_prefix }}" target="_self" title="{{ p.title | escape }}">{{ p.title | escape }}</a>
+</h4>
+<div class="fusion-carousel-meta">
+<span class="fusion-date">{% include avada/data-it.html d=p.date %}</span>
+<span class="fusion-inline-sep">|</span>
+<span><a href="{{ site.baseurl }}{{ p.url | remove_first: site.avada_prefix }}#respond">0 Commenti</a></span>
+</div><!-- fusion-carousel-meta -->
+</div><!-- fusion-carousel-item-wrapper -->
+</li>
+{%- endfor %}
+</ul><!-- fusion-carousel-holder -->
+										<div class="fusion-carousel-nav">
+					<span class="fusion-nav-prev"></span>
+					<span class="fusion-nav-next"></span>
+				</div>
+			
+		</div><!-- fusion-carousel-positioner -->
+	</div><!-- fusion-carousel -->
+</section>
+{%- endif -%}

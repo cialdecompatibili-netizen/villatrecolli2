@@ -1,0 +1,27 @@
+name: Deploy site
+on:
+  push:
+    branches: [main, master]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/_avada_Gemfile
+      JEKYLL_CMD: bundle exec jekyll
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+      - run: bundle install
+      - run: python3 pubblica_statico.py
+      - uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: _out
+          clean: true

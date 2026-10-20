@@ -1,0 +1,10 @@
+{%- assign usate = site.lazio | map: "categorie" | join: "|" | prepend: "|" | append: "|" -%}
+<ul>
+{%- for c in site.data.categorie %}
+{%- assign chiave = c.slug | prepend: "|" | append: "|" %}
+{%- if usate contains chiave %}
+<li class="cat-item cat-item-{{ c.id }}"><a href="{{ site.baseurl }}/{{ c.slug }}/">{{ c.nome }}</a>
+</li>
+{%- endif %}
+{%- endfor %}
+</ul>

@@ -1,0 +1,6 @@
+---
+layout: "servizio"
+title: "Archivi Portfolio - Servizi Lazio"
+stub: true
+---
+{% assign items = site.lazio | where: "wp_tipo", "portfolio" %}<ul>{% for i in items %}<li><a href="{{ i.url | relative_url }}">{{ i.title }}</a></li>{% endfor %}</ul>
