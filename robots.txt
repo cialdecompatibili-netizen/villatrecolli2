@@ -2,4 +2,4 @@ User-agent: *
 Disallow: /wp-admin/
 Allow: /wp-admin/admin-ajax.php
 
-Sitemap: https://cialdecompatibili-netizen.github.io/villatrecolli2/sitemap.xml
+Sitemap: https://villatrecolli.com/sitemap.xml
