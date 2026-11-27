@@ -187,7 +187,7 @@ print("sitemap:", len(urls), "url ->", origin + "/sitemap.xml")
 
 # --- hreflang assoluti: canonical/alternate/og:url devono essere URL completi (doppia lingua it/en)
 _host = origin[: len(origin) - len(baseurl)] if baseurl else origin
-_tag = _re.compile(r'<(?:link|meta)\b[^>]*(?:hreflang=|rel="canonical"|property="og:url")[^>]*>')
+_tag = _re.compile(r'<(?:link|meta)\b[^>]*(?:hreflang=|rel="canonical"|property="og:(?:url|image)")[^>]*>')
 for _dp, _dn, _fn in os.walk(OUT):
     _dn[:] = [d for d in _dn if not (_dp == OUT and d in ("admin", "wp-content", "wp-includes"))]
     for _f in _fn:
