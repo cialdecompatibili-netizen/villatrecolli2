@@ -15,7 +15,7 @@ NOTE PER LE PROSSIME SESSIONI (leggere prima di toccare qualcosa)
 import os, shutil, subprocess, sys
 OUT = "_out"; TMP = "_avada_site"
 DIRS = ["admin","contatti","author","blog","categoria_portfolio","portfolio-items","servizi","servizi-a-roma","servizi-agli-edifici","servizi-ai-cittadini","servizi-alle-aziende","slide-page","wp-content","wp-includes"]
-FILES = ["index.html","robots.txt","sitemap_index.xml","404.html","CNAME"]
+FILES = ["index.html","robots.txt","sitemap_index.xml","404.html","CNAME","google4c37affa3c0847c7.html"]
 # PUNTO CRITICO: una cartella nuova nella radice viene pubblicata SOLO se contiene un index.html con "avada-html-layout"
 # nei primi 4000 caratteri (pagina Avada). Una pagina nuova scritta a mano senza quel marcatore NON va online (404).
 # Le cartelle che iniziano con "." o "_" e assets/bin/docs/test/modules_source sono escluse di proposito.
